@@ -49,7 +49,7 @@ pip install -r requirements.txt
 ## Usage
 Run the main script to start the GUI:
 ```sh
-python control.py
+python calibration_curve.py
 ```
 
 ## Acknowledgment
