@@ -1,6 +1,6 @@
 # Laser Power Stabilization
 
-**Note:** This repository is currently under construction and does not yet contain all features or function fully.
+**Note:** This repository is currently under construction and may not yet contain all features or be fully functional.
 
 ## Overview
 This project is developed as part of a **bachelor thesis** focused on the **automation of laser power stabilization** across a tunable laser spectrum. The system integrates a **laser source**, a **power meter**, and a **filter system**, all controlled through a **Python-based GUI**.
