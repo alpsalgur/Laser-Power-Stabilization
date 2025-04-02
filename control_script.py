@@ -4,7 +4,7 @@ from ThorlabsPM100 import ThorlabsPM100
 from nkt_tools.extreme import Extreme
 from nkt_tools.varia import Varia
 
-rm = pyvisa.ResourceManager()  # Let PyVISA choose the available backend
+rm = pyvisa.ResourceManager()
 inst = rm.open_resource('USB0::0x1313::0x8078::P0017991::INSTR')
 power_meter = ThorlabsPM100(inst=inst)
 
