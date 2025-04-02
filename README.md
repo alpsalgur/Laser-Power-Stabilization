@@ -51,7 +51,7 @@ pip install -r requirements.txt
 ## Usage
 Run the main script to start the GUI:
 ```sh
-python calibration_curve.py
+python calibration_and_measurement_time_input.py
 ```
 
 ## Acknowledgment
