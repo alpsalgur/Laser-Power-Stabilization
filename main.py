@@ -54,18 +54,30 @@ def main():
     Laser = Extreme()
     Filter = Varia()
 
+    # Ask for target power at startup
+    target_power = simpledialog.askfloat("Target Power",
+                                          "Enter target power (µW):",
+                                          parent=root,
+                                          minvalue=1)
+    if target_power is None:
+        messagebox.showinfo("Info", "No target power entered. Exiting.")
+        root.quit()
+        return
+    
+    root.lift()  # Bring window to front
+
     # Constants
     MIN_LASER_POWER = 10.0  # Minimum allowed laser power setting (10%) by default
     min_wavelength = 400
-    max_wavelength = 835
-    NumberOfSteps = 85   # Number of calibration steps
+    max_wavelength = 840
+    NumberOfSteps = 20   # Number of calibration steps
 
     # Calibration data storage
     calibration_results = []
 
     def log_entry(step, wavelength, laser_setting, measured_power):
-        item_id = tree.insert("", "end", values=(step, f"{wavelength:.1f}", 
-                             f"{laser_setting:.1f}", f"{measured_power:.1f}" if measured_power else "N/A"))
+        value = f"{measured_power:.1f}" if measured_power is not None else "N/A"
+        item_id = tree.insert("", "end", values=(step, f"{wavelength:.1f}", f"{laser_setting:.1f}", value))
         tree.see(item_id)  # Auto-scroll to new entry
 
     def add_separator():
@@ -121,17 +133,17 @@ def main():
         settings = np.array([x[1] for x in calibration_results])
         return interp1d(wavelengths, settings, kind='linear', fill_value="extrapolate")
 
+    # Calibration routine
     def run_calibration():
         try:
             status_label.config(text="Starting calibration...")
-            target_power = 100.0  # µW
             tolerance = 0.5
             max_iterations = 10
 
             # Initial setup
-            Filter.short_setpoint = 400
-            Filter.long_setpoint = 410
-            Laser.set_power(max(30.0, MIN_LASER_POWER))  # Enforce minimum
+            Filter.short_setpoint = 495
+            Filter.long_setpoint = 505
+            Laser.set_power(max(30.0, MIN_LASER_POWER))
             Laser.set_emission(True)
             time.sleep(3)
 
@@ -149,6 +161,8 @@ def main():
             initial_wl = (Filter.short_setpoint + Filter.long_setpoint) / 2
             log_entry("Calibration", initial_wl, current_setting, power)
             calibration_results.append((initial_wl, current_setting, power))
+            status_label.config(text=f"Calibrated {initial_wl:.1f}nm: {power:.1f} µW")
+            time.sleep(1)
 
             # Wavelength sweep
             for step in range(NumberOfSteps):
@@ -174,7 +188,7 @@ def main():
                 current_wl = (new_short + new_long)/2
                 log_entry("Calibration", current_wl, current_setting, power)
                 calibration_results.append((current_wl, current_setting, power))
-                status_label.config(text=f"Calibrated {current_wl:.1f}nm")
+                status_label.config(text=f"Calibrated {current_wl:.1f}nm: {power:.1f} µW")
                 time.sleep(1)
 
             Laser.set_emission(False)
@@ -188,15 +202,14 @@ def main():
             status_label.config(text="Calibration failed")
 
     def start_measurement():
-        # Get parameters in main thread with focus enforcement
+        # Get parameters for measurement: start, end, step
         start_wl = simpledialog.askfloat("Start Wavelength", "Enter start (nm):",
                                         parent=root,
                                         minvalue=min_wavelength, 
                                         maxvalue=max_wavelength)
         if start_wl is None: return
         
-        # Bring main window back to front after first dialog
-        root.lift()
+        root.lift()  # Bring window to front
         
         end_wl = simpledialog.askfloat("End Wavelength", "Enter end (nm):",
                                       parent=root,
@@ -204,7 +217,6 @@ def main():
                                       maxvalue=max_wavelength)
         if end_wl is None: return
         
-        # Bring main window back to front again
         root.lift()
         
         step_size = simpledialog.askfloat("Step Size", "Enter step (nm):",
@@ -212,11 +224,20 @@ def main():
                                          minvalue=1, 
                                          maxvalue=end_wl-start_wl)
         if step_size is None: return
+        
+        # Ask for laser ON and OFF durations (in seconds)
+        on_time = simpledialog.askfloat("Laser ON Time", "Enter laser ON time (seconds):",
+                                        parent=root, minvalue=1)
+        if on_time is None: return
+        
+        off_time = simpledialog.askfloat("Laser OFF Time", "Enter laser OFF time (seconds):",
+                                         parent=root, minvalue=1)
+        if off_time is None: return
 
-        # Start thread with parameters
-        threading.Thread(target=lambda: run_measurement(start_wl, end_wl, step_size), daemon=True).start()
+        # Start measurement thread with parameters
+        threading.Thread(target=lambda: run_measurement(start_wl, end_wl, step_size, on_time, off_time), daemon=True).start()
 
-    def run_measurement(start_wl, end_wl, step_size):
+    def run_measurement(start_wl, end_wl, step_size, on_time, off_time):
         try:
             if not calibration_results:
                 root.after(0, lambda: messagebox.showerror("Error", "Perform calibration first!"))
@@ -226,7 +247,6 @@ def main():
             calibrated_wls = [x[0] for x in calibration_results]
             min_cal_wl, max_cal_wl = min(calibrated_wls), max(calibrated_wls)
 
-            Laser.set_emission(True)
             current_wl = start_wl
             num_steps = int((end_wl - start_wl)/step_size) + 1
 
@@ -237,22 +257,29 @@ def main():
                     root.after(0, lambda: messagebox.showerror("Error", "Wavelength out of range!"))
                     break
 
+                # Set filter for current wavelength
                 Filter.short_setpoint = short
                 Filter.long_setpoint = long
                 time.sleep(0.5)
-
+                # Set laser power based on calibration interpolation
                 setting = float(interp_func(current_wl))
                 setting = max(MIN_LASER_POWER, min(100, setting))
                 Laser.set_power(setting)
-                
-                if step_idx == 0:
-                    time.sleep(10)  # 10-second stabilization for first step
-                else: 
-                    time.sleep(3)   # Normal stabilization for other steps
 
-                root.after(0, lambda: log_entry("Measurement", current_wl, setting, None))
-                root.after(0, lambda: status_label.config(
-                    text=f"Measuring {current_wl:.1f}nm ({setting:.1f}%)"))
+                # Laser ON phase for specified duration
+                Laser.set_emission(True)
+                root.after(0, lambda wl=current_wl: status_label.config(
+                    text=f"Measuring {wl:.1f}nm - LASER ON for {on_time:.1f} sec"))
+                time.sleep(on_time)
+
+                # Laser OFF phase for specified duration
+                Laser.set_emission(False)
+                root.after(0, lambda wl=current_wl: status_label.config(
+                    text=f"Measuring {wl:.1f}nm - LASER OFF for {off_time:.1f} sec"))
+                time.sleep(off_time)
+
+                # Log the measurement (no power meter reading available in open-loop mode)
+                root.after(0, lambda wl=current_wl, set_val=setting: log_entry("Measurement", wl, set_val, None))
 
                 if current_wl < min_cal_wl or current_wl > max_cal_wl:
                     root.after(0, lambda: messagebox.showwarning(
@@ -270,6 +297,41 @@ def main():
             root.after(0, lambda: messagebox.showerror("Measurement Error", str(e)))
             root.after(0, lambda: status_label.config(text="Measurement failed"))
 
+    def start_calibration():
+        threading.Thread(target=run_calibration, daemon=True).start()
+
+    # Updated Exit function to turn off the laser and then close the application.
+    def exit_application():
+        # Cleanup while Tkinter is still alive
+        try:
+            Laser.set_emission(False)
+            inst.close()
+            rm.close()
+            
+            for item in tree.get_children():
+                tree.delete(item)
+            
+            if 'title_label' in globals():
+                title_label.destroy()
+            if 'status_label' in globals():
+                status_label.destroy()
+            
+            plt.close('all')
+            
+        except Exception as e:
+            messagebox.showwarning("Warning", f"Cleanup error: {e}")
+        
+        # Tkinter shutdown
+        try:
+            root.quit()
+            root.destroy()
+        except:
+            pass
+        
+        # Force cleanup before Python exits
+        import gc
+        gc.collect()
+
     # Control buttons
     ttk.Button(button_frame, text="Calibrate", 
               command=lambda: threading.Thread(target=run_calibration, daemon=True).start(),
@@ -282,7 +344,7 @@ def main():
     ttk.Button(button_frame, text="Plot Calibration", 
               command=lambda: plot_calibration_curve(calibration_results),
               width=20).pack(side="left", padx=5)
-    ttk.Button(button_frame, text="Exit", command=root.quit,
+    ttk.Button(button_frame, text="Exit", command=exit_application,
               width=10).pack(side="right", padx=5)
 
     root.mainloop()
