@@ -86,4 +86,4 @@ The GUI will prompt for a target power and allow calibration and measurement acr
 
 ## Acknowledgments
 
-This project was developed as part of a bachelor thesis at Czech Technical University in Prague, supervised by Egor Ukraintsev, and carried out in cooperation with the NKT Photonics CONTROL software platform.
+This project was developed as part of a bachelor thesis at *Czech Technical University in Prague*, supervised by *Egor Ukraintsev, Ph.D.*, and carried out in cooperation with the NKT Photonics CONTROL software platform.
