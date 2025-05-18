@@ -79,9 +79,10 @@ It allows users to calibrate and stabilize the output power over a defined wavel
 **Start the application with:**
 
    ```bash
-   python calibration_and_measurement_time_input.py
-   The GUI will prompt for a target power and allow calibration and measurement across wavelengths.
+   python main.py
    ```
+   
+The GUI will prompt for a target power and allow calibration and measurement across wavelengths.
 
 **Acknowledgments**
 This project was developed as part of a bachelor thesis at Czech Technical University in Prague, supervised by Egor Ukraintsev, and carried out in cooperation with the NKT Photonics CONTROL software platform.
