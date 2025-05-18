@@ -1,58 +1,54 @@
 # Laser Power Stabilization
 
-**Note:** This repository is currently under construction and may not yet contain all features or be fully functional.
+> ⚠️ **Note:** This repository contains the full Python implementation for a bachelor thesis project focused on automated laser power stabilization using NKT Photonics hardware. The code is complete and functional for calibration and measurement procedures.
 
 ## Overview
-This project is developed as part of a **bachelor thesis** focused on the **automation of laser power stabilization** across a tunable laser spectrum. The system integrates a **laser source**, a **power meter**, and a **filter system**, all controlled through a **Python-based GUI**.
+
+This project presents a complete system for **automated power stabilization of a tunable supercontinuum laser**, using a Python-based interface and real-time feedback algorithms. The system controls a **NKT Photonics SuperK Extreme laser**, a **SuperK VARIA tunable filter**, and a **Thorlabs PM100D power meter**.
+
+It allows users to calibrate and stabilize the output power over a defined wavelength range and to perform automated measurement sweeps with high precision and repeatability.
 
 ## Objectives
-The main goals of this project include:
 
-1. **Familiarization with Hardware & Software Control**
-   - Understanding the operation of tunable lasers and power meters.
-   - Establishing software-based control over these components.
+1. **Hardware and Software Integration**  
+   - Interfacing with the NKT Photonics CONTROL software using the `nkt-tools` library.  
+   - Communicating with the Thorlabs PM100D power meter via `PyVISA`.  
 
-2. **Hardware Setup & Interfacing**
-   - Designing a setup that interconnects the power meter, photodiode, and tunable laser.
-   - Enabling **bi-directional communication** between the hardware and software.
+2. **Automation of Laser Power Stabilization**  
+   - Implementing an adaptive feedback loop to dynamically adjust laser power.  
+   - Using calibration data and interpolation to predict optimal power settings.  
 
-3. **Software Development & Automation**
-   - Implementing **data acquisition and control algorithms**.
-   - Using available libraries (e.g., **PyVISA, ThorlabsPM100, and NKT tools**) for device communication.
-   - Developing a feedback loop that stabilizes laser power dynamically.
+3. **Measurement Routine**  
+   - Executing wavelength sweeps over a user-defined range.  
+   - Applying calibration-based power corrections in open-loop mode.  
 
-4. **Testing & Validation**
-   - Creating a **test protocol** to verify the efficiency of power control.
-   - Performing real-world testing under different wavelength conditions.
-
-5. **Graphical User Interface (GUI)**
-   - Designing and developing a **user-friendly application**.
-   - Visualizing real-time power adjustments and wavelength shifts.
+4. **Graphical User Interface (GUI)**  
+   - A Tkinter-based GUI for real-time interaction.  
+   - Options for calibration, measurement, data export, and live status monitoring.
 
 ## Technology Stack
-- **Programming Language:** Python
-- **GUI Framework:** Tkinter
-- **Hardware Communication:** PyVISA, ThorlabsPM100, NKT tools
-- **Instruments:** NKT Photonics Extreme, Varia filter, Thorlabs Power Meter
+
+| Component          | Description                                    |
+|--------------------|------------------------------------------------|
+| Language           | Python 3.9                                     |
+| GUI Framework      | Tkinter                                        |
+| Communication      | PyVISA, ThorlabsPM100, nkt-tools               |
+| Visualization      | matplotlib                                     |
+| Control Hardware   | NKT Photonics SuperK Extreme, VARIA, CONNECT   |
+| Sensing Hardware   | Thorlabs PM100D Power Meter                    |
 
 ## Features
-✅ **Automatic laser power adjustment** to maintain target power levels.<br>
-✅ **Real-time data visualization** via GUI.<br>
-✅ **Tunable wavelength control** with feedback stabilization.<br>
-✅ **Bi-directional hardware communication** for dynamic adjustments.<br>
-✅ **User-configurable parameters** (target power, wavelength range, step size).<br>
+
+✅ **Calibration Routine** with power feedback loop  
+✅ **Real-time interpolation** for automated measurement  
+✅ **Laser and filter control** via Python (no AutoHotkey)  
+✅ **Measurement sweep interface** with configurable parameters  
+✅ **Graph export and CSV output**  
+✅ **GUI with logging and visual feedback**
 
 ## Installation
-To install the required dependencies, run:
-```sh
-pip install -r requirements.txt
-```
 
-## Usage
-Run the main script to start the GUI:
-```sh
-python main.py
-```
-
-## Acknowledgment
-This project is part of a **bachelor thesis** focusing on advanced laser stabilization methods for applications in bio-imaging, semiconductor inspection, and scientific instrumentation.
+1. **Clone the repository**  
+   ```bash
+   git clone https://github.com/alpsalgur/Laser-Power-Stabilization.git
+   cd Laser-Power-Stabilization
