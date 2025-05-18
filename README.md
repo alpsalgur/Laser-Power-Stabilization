@@ -48,7 +48,40 @@ It allows users to calibrate and stabilize the output power over a defined wavel
 
 ## Installation
 
-1. **Clone the repository**  
+1. **Clone the repository:**  
+
    ```bash
    git clone https://github.com/alpsalgur/Laser-Power-Stabilization.git
    cd Laser-Power-Stabilization
+
+2. **Create and activate a virtual environment:**
+
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate  # On Windows
+
+3. **Install dependencies:**
+
+   ```bash
+   pip install -r requirements.txt
+
+4. **Install the ThorlabsPM100 driver (manually):**
+
+   ```bash
+   git clone https://github.com/clade/ThorlabsPM100.git
+   cd ThorlabsPM100
+   python setup.py install
+
+> **Note:** The nkt-tools package is available via pip and includes the necessary SDK bindings.
+
+## Usage
+
+**Start the application with:**
+
+   ```bash
+   python calibration_and_measurement_time_input.py
+   The GUI will prompt for a target power and allow calibration and measurement across wavelengths.
+   ```
+
+**Acknowledgments**
+This project was developed as part of a bachelor thesis at Czech Technical University in Prague, supervised by Egor Ukraintsev, and carried out in cooperation with the NKT Photonics CONTROL software platform.
