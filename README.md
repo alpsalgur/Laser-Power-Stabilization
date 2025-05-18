@@ -1,12 +1,12 @@
 # Laser Power Stabilization
 
-> ⚠️ **Note:** This repository contains the full Python implementation for a bachelor thesis project focused on automated laser power stabilization using NKT Photonics hardware. The code is complete and functional for calibration and measurement procedures.
+> ⚠️ **Note:** This repository contains the complete Python implementation developed for a bachelor thesis project on automated laser power stabilization using NKT Photonics hardware. It provides a fully functional and tested system for performing both calibration and measurement procedures.
 
 ## Overview
 
-This project presents a complete system for **automated power stabilization of a tunable supercontinuum laser**, using a Python-based interface and real-time feedback algorithms. The system controls a **NKT Photonics SuperK Extreme laser**, a **SuperK VARIA tunable filter**, and a **Thorlabs PM100D power meter**.
+This project presents a comprehensive system for **automated power stabilization of a tunable supercontinuum laser**, utilizing a Python-based interface alongside real-time feedback algorithms. The system integrates and controls an **NKT Photonics SuperK Extreme laser**, a **SuperK VARIA tunable filter**, and a **Thorlabs PM100D power meter**.
 
-It allows users to calibrate and stabilize the output power over a defined wavelength range and to perform automated measurement sweeps with high precision and repeatability.
+It enables precise calibration and stabilization of the laser output power across a defined wavelength range, and supports automated measurement sweeps with high precision and repeatability.
 
 ## Objectives
 
