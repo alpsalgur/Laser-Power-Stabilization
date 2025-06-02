@@ -41,7 +41,7 @@ It enables precise calibration and stabilization of the laser output power acros
 
 ✅ **Calibration Routine** with power feedback loop  
 ✅ **Real-time interpolation** for automated measurement  
-✅ **Laser and filter control** via Python (no AutoHotkey)  
+✅ **Laser and filter control** via Python  
 ✅ **Measurement sweep interface** with configurable parameters  
 ✅ **Graph export and CSV output**  
 ✅ **GUI with logging and visual feedback**
